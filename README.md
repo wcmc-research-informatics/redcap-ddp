@@ -26,26 +26,32 @@ Installation and Configuration
 Drag and drop into the web root of your web server. Create a new class in utils/ called Constants.php with the following
 parameters:
 
+```php
+<?php
 
-	class Constants {
-	
+class Constants 
+{
 	//Key is REDCap pid. Value is path to the configuration file. ??? is also the pid.
 	public static $pidfiles = array(
-					"" => '/var/www/html/ddp/redcap-ddp/config/???_config.json',
-					"" => '/var/www/html/ddp/redcap-ddp/config/???_config.json',
-					"" => '/var/www/html/ddp/redcap-ddp/config/???_config.json');
-	
+		"" => '/var/www/html/ddp/redcap-ddp/config/???_config.json',
+		"" => '/var/www/html/ddp/redcap-ddp/config/???_config.json',
+		"" => '/var/www/html/ddp/redcap-ddp/config/???_config.json'
+	);
+
 	// Key is a string to identify target database. Value is another associative
 	// array where the keys are attributes for connecting to the server and the
 	// values are the values.
-	public static $host = array("SERVER1" => array("Server" => "",
-                                                  "Username" => "",
-                                                  "Password" => "",
-                                                  "Database" => "DATABASE1",
-                                                  "Type" => "ORACLE")
-                                             
-                                   );
+	public static $host = array(
+		"SERVER1" => array(
+			"Server" => "",
+			"Username" => "",
+			"Password" => "",
+			"Database" => "DATABASE1",
+			"Type" => "ORACLE"
+		)
+	);
 }
+```
 
 The value for "Type" is currently unused but will be supported in a later update. It should dictate what type
 of database $host is connecting to.
