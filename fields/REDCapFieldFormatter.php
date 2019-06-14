@@ -10,7 +10,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/ddp/redcap-ddp/security-checks.php');
  * class encapsulates that behavior.
  * 
  * @author     Marcos Davila (mzd2016@med.cornell.edu)
- * @since      v0.1
+ * @since      v3.10
  * @package    fields
  * @license    Open Source
  * 
@@ -46,8 +46,8 @@ class REDCapFieldFormatter {
 	 * constructs and returns an associative array which holds the field name
 	 * and the value obtained from the database query.
 	 */
-	public function getField(array $resultSet, array $configItem) {
-		if ($configItem ["Source"] === "ARCH" || $configItem ["Source"] === "CREST") {
+	public function getField(array $resultSet, array $configItem, $sourcetype) {
+		if ($sourcetype === "MSSQL") {
 			// Temporal fields have to be processed a different way from one-time fields
 			// so let's process these first.
 			if ($configItem ['temporal'] == 1) {
@@ -61,7 +61,7 @@ class REDCapFieldFormatter {
 				return $this->getGeneralField ( $configItem, $resultSet );
 			}
 		} else {
-			exit("getField: DDP does not support connecting to " . $configItem ["Source"] . " at this time.");
+			exit("getField: DDP does not support connecting to " . $sourcetype . " at this time.");
 		}
 	}
 	

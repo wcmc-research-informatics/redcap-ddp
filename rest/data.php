@@ -8,7 +8,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/ddp/redcap-ddp/security-checks.php');
  * ID (MRN)
  * 
  * @author     Marcos Davila (mzd2016@med.cornell.edu)
- * @since      v0.1
+ * @since      v3.10
  * @package    rest
  * @license    Open Source
  * 
@@ -55,9 +55,11 @@ class Data {
 	 *
 	 */
 	public function process($user, $project_id, $redcap_url, $id, $fields) {
-		if (in_array ( $project_id, array_keys(Constants::$pidfiles)) ) {		
+	    $constants = new Constants();
+	    
+		if (in_array ( $project_id, array_keys($constants->pidfiles)) ) {		
 			// Instantiate new ConfigDAO to hold information from configuration file
-			$config = new ConfigDAO ( Constants::$pidfiles [$project_id] );
+		    $config = new ConfigDAO ( $constants->pidfiles [$project_id] );
 			$configarr = $config->getConfiguration ();
 			// Pass this information into the dictionary to return the
 			// items of interest from the dictionary
@@ -66,7 +68,7 @@ class Data {
 			// Get the JSON for these fields
 			$a = $this->getJSON ( $configdict );
 			
-			//var_dump($a);
+			//var_dump($a); // Uncomment to debug
 			return $a;
 		} else {
 		    exit("Sorry, your project is unsupported by DDP at this time.");
@@ -78,6 +80,7 @@ class Data {
 	 *
 	 */
 	private function getJSON(array $configdict) {
+	    $constants = new Constants();
 		// Make one associative array for one-time data and temporal data.
 		$json_rows = array ();
 		// Must iterate through all fields and make a call for each field
@@ -95,9 +98,10 @@ class Data {
 			// If the result set is empty, no information could be found for that query, so skip
 			// the import -- happens automatically since while body never runs.
 			while ($resultSet = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)){
-				$json_rows [] = $redcapfields->getField ( $resultSet, $configItem );
+			    $json_rows [] = $redcapfields->getField ( $resultSet, $configItem, $constants->host[ $configItem["Source"] ]["Type"] );
 			}
-      sqlsrv_free_stmt($result);
+			
+            sqlsrv_free_stmt($result);
 		}
 		
 		// Close the database connection
@@ -113,22 +117,25 @@ class Data {
 	 *
 	 */
 	private function connect (array $configdict) {
+	    $constants = new Constants();
 		
 		foreach($configdict as $configItem){
 			$db_sources[] = $configItem["Source"];
 		}
 		$db_sources = array_unique($db_sources);
 		
-		foreach($db_sources as $sourcesystem){
-			if ($sourcesystem === "ARCH") {
-				$this->db_connect["ARCH"] = new arch_db_connect (  );
-      } elseif ($sourcesystem === "CREST") {
-				$this->db_connect["CREST"] = new crest_db_connect (  );
-			} else {
-				exit("connect: DDP does not support connecting to " . $sourcesystem . " at this time.");
-			}
+		// Find the connection string for the $db_sources in the constants
+		// file. From the constants file, get the database type and choose
+		// the proper db_connect subclass to instantiate.
+		foreach($db_sources as $source){
+		    if ($constants->host[$source]["Type"] === "MSSQL") {
+		        $this->db_connect[$source] = new mssql_db_connect( $source );
+		    } else {
+		        exit("connect: DDP does not support connecting to " . $sourcesystem . " at this time.");
+		    }
+		    
 		}
-		
+			
 		if (is_null ( $this->db_connect )) {
 			exit('Sorry, DDP could not find a valid database to connect to.');
 		}

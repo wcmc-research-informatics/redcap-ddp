@@ -1,6 +1,6 @@
 <?php
 
-require($_SERVER['DOCUMENT_ROOT'] . '/ddp/redcap-ddp/security-checks.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/ddp/redcap-ddp/security-checks.php');
 
 /*
  * RESTful API which routes REDCap requests from supported projects to the 
@@ -79,6 +79,16 @@ try {
 
   if ($authentication_required) {
     $response ['data'] = auth ( $_POST ["user"], $_POST ["project_id"], $_POST ["redcap_url"] );
+    
+    // Throw an exception if the authentication web service returns 0
+    // Set $response['data'] back to NULL if the user can access the DDP web service
+    
+    if($response['data'] == 0) {
+       throw new Exception('The current project has not been configured to use SUPER REDCap.');
+    } else {
+        $response['data'] = NULL;
+    }
+    
   }
 
   // Calls the API

@@ -6,7 +6,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/ddp/redcap-ddp/security-checks.php');
  * Acts as a container to hold values read in from the configuration file.
  * 
  * @author     Marcos Davila (mzd2016@med.cornell.edu)
- * @since      v0.1
+ * @since      v3.10
  * @package    dao
  * @license    Open Source
  *

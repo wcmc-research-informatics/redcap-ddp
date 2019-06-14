@@ -7,7 +7,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/ddp/redcap-ddp/security-checks.php');
  * REDCap forms and a database.
  * 
  * @author     Marcos Davila (mzd2016@med.cornell.edu)
- * @since      v0.1
+ * @since      v3.10
  * @package    rest
  * @license    Open Source
  * 
@@ -46,10 +46,11 @@ class meta {
          * files.
          */
 	function process($user, $project_id, $redcap_url) {
+		$constants = new Constants();
 		
-		if (in_array( $project_id , array_keys(Constants::$pidfiles)) ) {
+		if (in_array( $project_id , array_keys($constants->pidfiles)) ) {
 			// Instantiate new ConfigDAO to hold information from configuration file
-			$config = new ConfigDAO ( Constants::$pidfiles [$project_id] );
+		    $config = new ConfigDAO ( $constants->pidfiles [$project_id] );
 			$configarr = $config->getConfiguration ();
 			$meta = array();
 			

@@ -212,21 +212,6 @@
                 "2": "2"
             }
         },
-        "sm_vessel_invasive_intra_ext": {
-            "field": "sm_vessel_invasive_intra_ext",
-            "label": null,
-            "description": null,
-            "temporal": 1,
-            "category": "Pathology",
-            "subcategory": null,
-            "identifier": null,
-            "time_format": "Y-m-d",
-            "dictionary": "",
-            "map": {
-                "1": "1",
-                "2": "2"
-            }
-        },
         "radial_margin_peri_mesen": {
             "field": "radial_margin_peri_mesen",
             "label": null,
